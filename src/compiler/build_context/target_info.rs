@@ -356,10 +356,19 @@ impl TargetInfo {
                 }
             }
 
+            // TODO: Remove this and also `-Zembed-metadata` flag
+            // once Cargo' MSRV is at the version stabilizing `-Cembed-metadata`
+            // (possibly 1.101)
             let should_embed_metadata = match gctx.cli_unstable().embed_metadata {
                 Some(v) => v,
-                // Enable -Zembed-metadata=no by default if both cargo and rustc are nightly
-                None => !features::is_nightly_toolchain(&rustc.version),
+                None => rustc
+                    .cached_output(
+                        crate_type_process
+                            .clone()
+                            .args(&["-C", "embed-metadata=no"]),
+                        extra_fingerprint,
+                    )
+                    .is_err(),
             };
 
             return Ok(TargetInfo {
