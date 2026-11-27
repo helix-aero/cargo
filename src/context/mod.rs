@@ -826,7 +826,7 @@ impl GlobalContext {
         }
 
         return Some(
-            self.cargo_home
+            self.home_path
                 .as_path_unlocked()
                 .join("storage")
                 .join(shared_storage::VERSION),
